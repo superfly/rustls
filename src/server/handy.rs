@@ -1,4 +1,5 @@
 use crate::msgs::enums::SignatureScheme;
+use crate::msgs::handshake::ClientHelloPayload;
 use crate::sign;
 use crate::key;
 use webpki;
@@ -97,7 +98,7 @@ pub struct FailResolveChain {}
 impl server::ResolvesServerCert for FailResolveChain {
     fn resolve(&self,
                _server_name: Option<webpki::DNSNameRef>,
-               _sigschemes: &[SignatureScheme])
+               _sigschemes: &[SignatureScheme], _client_hello: &ClientHelloPayload)
                -> Option<sign::CertifiedKey> {
         None
     }
@@ -138,7 +139,7 @@ impl AlwaysResolvesChain {
 impl server::ResolvesServerCert for AlwaysResolvesChain {
     fn resolve(&self,
                _server_name: Option<webpki::DNSNameRef>,
-               _sigschemes: &[SignatureScheme])
+               _sigschemes: &[SignatureScheme], _client_hello: &ClientHelloPayload)
                -> Option<sign::CertifiedKey> {
         Some(self.0.clone())
     }
@@ -174,7 +175,7 @@ impl ResolvesServerCertUsingSNI {
 impl server::ResolvesServerCert for ResolvesServerCertUsingSNI {
     fn resolve(&self,
                server_name: Option<webpki::DNSNameRef>,
-               _sigschemes: &[SignatureScheme])
+               _sigschemes: &[SignatureScheme], _client_hello: &ClientHelloPayload)
                -> Option<sign::CertifiedKey> {
         if let Some(name) = server_name {
             self.by_name.get(name.into())

@@ -3,7 +3,7 @@ use crate::keylog::{KeyLog, NoKeyLog};
 use crate::suites::{SupportedCipherSuite, ALL_CIPHERSUITES};
 use crate::msgs::enums::{ContentType, SignatureScheme};
 use crate::msgs::enums::{AlertDescription, HandshakeType, ProtocolVersion};
-use crate::msgs::handshake::ServerExtension;
+use crate::msgs::handshake::{ServerExtension,ClientHelloPayload};
 use crate::msgs::message::Message;
 use crate::error::TLSError;
 use crate::sign;
@@ -102,7 +102,7 @@ pub trait ResolvesServerCert : Send + Sync {
     /// the key is inside a `SigningKey`.
     fn resolve(&self,
                server_name: Option<webpki::DNSNameRef>,
-               sigschemes: &[SignatureScheme])
+               sigschemes: &[SignatureScheme], client_hello: &ClientHelloPayload)
                -> Option<sign::CertifiedKey>;
 }
 

@@ -594,7 +594,7 @@ impl State for ExpectClientHello {
             let sni_ref = sni.as_ref().map(webpki::DNSName::as_ref);
             trace!("sni {:?}", sni_ref);
             trace!("sig schemes {:?}", sigschemes_ext);
-            let certkey = sess.config.cert_resolver.resolve(sni_ref, sigschemes_ext);
+            let certkey = sess.config.cert_resolver.resolve(sni_ref, sigschemes_ext, &client_hello);
             certkey.ok_or_else(|| {
                 sess.common.send_fatal_alert(AlertDescription::AccessDenied);
                 TLSError::General("no server certificate chain resolved".to_string())

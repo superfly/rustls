@@ -15,6 +15,7 @@ use rustls::{ServerConfig, ServerSession, ResolvesServerCert};
 use rustls::Session;
 use rustls::{Stream, StreamOwned};
 use rustls::{ProtocolVersion, SignatureScheme, CipherSuite};
+use rustls::internal::msgs::handshake::ClientHelloPayload;
 use rustls::TLSError;
 use rustls::sign;
 use rustls::{ALL_CIPHERSUITES, SupportedCipherSuite};
@@ -325,7 +326,7 @@ impl ServerCheckCertResolve {
 impl ResolvesServerCert for ServerCheckCertResolve {
     fn resolve(&self,
                server_name: Option<webpki::DNSNameRef<'_>>,
-               sigschemes: &[SignatureScheme])
+               sigschemes: &[SignatureScheme], _client_hello: &ClientHelloPayload)
         -> Option<sign::CertifiedKey> {
         if let Some(got_dns_name) = server_name {
             let got: &str = got_dns_name.into();
@@ -365,7 +366,7 @@ struct ServerCheckNoSNI {}
 impl ResolvesServerCert for ServerCheckNoSNI {
     fn resolve(&self,
                server_name: Option<webpki::DNSNameRef<'_>>,
-               _sigschemes: &[SignatureScheme])
+               _sigschemes: &[SignatureScheme], _client_hello: &ClientHelloPayload)
         -> Option<sign::CertifiedKey> {
         assert!(server_name.is_none());
 
